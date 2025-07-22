@@ -11,14 +11,10 @@ import { z } from 'zod';
 // const pineconeApiKey = (c.env as { PINECONE_API_KEY?: string }).PINECONE_API_KEY;
 import { ChatGroq } from "@langchain/groq";
 import { logger } from '@/middlewares/pino-logger';
+import { env } from 'hono/adapter'
 
-const llm = new ChatGroq({
-  model: "llama-3.3-70b-versatile",
-  temperature: 0,
-  maxTokens: undefined,
-  maxRetries: 2,
-  // other params...
-});
+// HAPUS inisialisasi llm di global scope
+// const llm = new ChatGroq({ ... });
 
 const embeddings = new PineconeEmbeddings({
   // apiKey: pineconeApiKey,
@@ -100,6 +96,15 @@ export const processText: AppRouteHandler<ProcessTextRoute> = async (c) => {
       id: z.any().describe('10-digit student identification number'),
     });
 
+    const apiKey = (c.env as { GROQ_API_KEY?: string }).GROQ_API_KEY;
+    const llm = new ChatGroq({
+      model: "llama-3.3-70b-versatile",
+      temperature: 0,
+      maxTokens: undefined,
+      maxRetries: 2,
+      apiKey,
+      // other params...
+    });
     const structuredllm = llm.withStructuredOutput(schema);
     const result = await structuredllm.invoke(`Extract the entities from this text: ${page_one}`);
     const parsed = schema.parse(result); // validasi + typing
