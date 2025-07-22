@@ -6,8 +6,11 @@ import { jsonContent } from 'stoker/openapi/helpers';
 
 // src/routes/home/home.index.ts
 import { createRouter } from '@/lib/create-app';
+import { passwordHeaderMiddleware } from '@/middlewares/password-header';
 
 const router = createRouter();
+
+router.use('/*', passwordHeaderMiddleware);
 
 // Helper function to escape HTML
 function escapeHtml(str: string) {
