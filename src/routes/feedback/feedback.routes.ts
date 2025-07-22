@@ -1,33 +1,61 @@
-import { createRoute } from '@hono/zod-openapi';
-import * as HttpStatusCodes from 'stoker/http-status-codes';
-import { jsonContent, jsonContentRequired } from 'stoker/openapi/helpers';
+import { createRoute, z } from '@hono/zod-openapi';
 
-import { z } from '@hono/zod-openapi';
+// Simplified schemas
+const FeedbackInputSchema = z.object({
+  nameAssignment: z.string(),
+  description: z.string(),
+  isiTugas: z.string(),
+  personalization: z.string().optional(),
+}).describe('Input tugas untuk dianalisis');
 
-// Input schema: expects a JSON object with a 'text' string
-export const InputSchema = z.object({
-  text: z.string().openapi({ example: 'tell me a joke' }),
-});
+// Output schema lebih fleksibel
+const FeedbackOutputSchema = z.object({
+  success: z.boolean(),
+  data: z.any().optional(),
+  error: z.string().optional(),
+}).describe('Response dari analisis tugas');
 
-// Output schema: returns a JSON object with a 'text' string
-export const OutputSchema = z.object({
-  text: z
-    .string()
-    .openapi({ example: 'Why did the chicken cross the road? To get to the other side!' }),
-});
-
-const tags = ['AI'];
-
+// Route definition
 export const processText = createRoute({
   method: 'post',
-  path: '/chatbot',
-  tags,
-  description: 'Simple generative AI chatbot that processes text input.',
+  path: '/feedback',
+  tags: ['AI Feedback'],
+  description: 'Analisis tugas menggunakan AI agent orchestrator untuk memberikan feedback komprehensif',
   request: {
-    body: jsonContentRequired(InputSchema, 'The text to process'),
+    body: {
+      required: true,
+      content: {
+        'application/json': {
+          schema: FeedbackInputSchema,
+        },
+      },
+    },
   },
   responses: {
-    [HttpStatusCodes.OK]: jsonContent(OutputSchema, 'The processed text'),
+    200: {
+      description: 'Berhasil memproses tugas',
+      content: {
+        'application/json': {
+          schema: FeedbackOutputSchema,
+        },
+      },
+    },
+    400: {
+      description: 'Input tidak valid',
+      content: {
+        'application/json': {
+          schema: FeedbackOutputSchema,
+        },
+      },
+    },
+    500: {
+      description: 'Server error',
+      content: {
+        'application/json': {
+          schema: FeedbackOutputSchema,
+        },
+      },
+    },
   },
 });
 

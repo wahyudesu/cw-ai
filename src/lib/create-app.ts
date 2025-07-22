@@ -3,6 +3,7 @@ import { notFound, onError, serveEmojiFavicon } from 'stoker/middlewares';
 import { defaultHook } from 'stoker/openapi';
 
 import { logger } from '@/middlewares/pino-logger';
+import { cors } from 'hono/cors';
 
 import type { AppBindings } from './types';
 
@@ -14,6 +15,7 @@ export function createRouter() {
 }
 export default function createApp() {
   const app = createRouter();
+  app.use('*', cors());
   app.use(logger());
   app.use(serveEmojiFavicon('🆗'));
 

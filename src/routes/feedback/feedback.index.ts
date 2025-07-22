@@ -7,6 +7,6 @@ import { passwordHeaderMiddleware } from '@/middlewares/password-header';
 
 const router = createRouter();
 router.use('/*', passwordHeaderMiddleware);
-router.openapi(routes.processText, handlers.processText);
+router.openapi(routes.processText, handlers.processFeedback);
 
 export default router;

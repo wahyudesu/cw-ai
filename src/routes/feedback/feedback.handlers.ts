@@ -1,23 +1,44 @@
 import type { AppRouteHandler } from '@/lib/types';
 import type { ProcessTextRoute } from './feedback.routes';
-// import { groq } from '@ai-sdk/groq';
-import { createGroq } from '@ai-sdk/groq';
-import { generateText } from 'ai';
+import { ai_agent_orchestrator } from './agents';
 
-export const processText: AppRouteHandler<ProcessTextRoute> = async (c) => {
-  const { text } = c.req.valid('json');
-  const apiKey = (c.env as { GROQ_API_KEY?: string }).GROQ_API_KEY;
-  if (!apiKey) {
-    // Always return 200 with a valid response shape for OpenAPI contract
+export const processFeedback: AppRouteHandler<ProcessTextRoute> = async (c) => {
+  try {
+    const { nameAssignment, description, isiTugas, personalization } = await c.req.json();
+
+    if (!nameAssignment || !description || !isiTugas) {
+      return c.json({
+        success: false,
+        error: 'nameAssignment, description, dan isiTugas harus diisi',
+      }, 400);
+    }
+
+    // Panggil AI agent orchestrator
+    const result = await ai_agent_orchestrator(
+      c,
+      nameAssignment,
+      description,
+      isiTugas,
+      personalization || ''
+    );
+
+    // Return hasil dari semua agent secara eksplisit
     return c.json({
-      text: '[ERROR] Groq API key is missing. Please set GROQ_API_KEY in your environment.',
+      success: true,
+      error: undefined,
+      data: {
+        analysis_result: result.analysis_result,
+        summary_result: result.summary_result,
+        final_evaluation: result.final_evaluation,
+        metadata: result.metadata,
+      },
     });
-  }
 
-  const groq = createGroq({ apiKey });
-  const result = await generateText({
-    model: groq('gemma2-9b-it'),
-    prompt: text,
-  });
-  return c.json({ text: result.text });
+  } catch (error) {
+    return c.json({
+      success: false,
+      error: error instanceof Error ? error.message : 'Terjadi kesalahan saat memproses tugas',
+      data: null,
+    }, 500);
+  }
 };

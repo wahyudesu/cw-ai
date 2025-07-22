@@ -13,6 +13,7 @@
     "@langchain/community": "^0.3.49",
     "@langchain/core": "^0.3.66",
     "@langchain/groq": "^0.2.3",
+    "@langchain/langgraph": "^0.3.11",
     "@langchain/openai": "^0.6.2",
     "@langchain/pinecone": "^0.2.0",
     "@pinecone-database/pinecone": "^5.1.2",
@@ -30,6 +31,7 @@
     "zod": "^4.0.5"
   },
   "devDependencies": {
+    "@types/node": "^24.1.0",
     "prettier": "^3.6.2",
     "wrangler": "^4.4.0"
   }
