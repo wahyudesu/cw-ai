@@ -5,12 +5,9 @@ import { createClient } from '@supabase/supabase-js';
 import { extractText, getDocumentProxy } from 'unpdf';
 import { PineconeEmbeddings } from '@langchain/pinecone';
 import { cosineSimilarity } from 'ai';
-import { createGroq } from '@ai-sdk/groq';
-import { generateObject } from 'ai';
 import { z } from 'zod';
 import { ChatGroq } from "@langchain/groq";
 import { logger } from '@/middlewares/pino-logger';
-import { env } from 'hono/adapter'
 
 // Extract PDF data using unpdf
 async function extractPdfData(url: string) {
@@ -72,16 +69,8 @@ export const processText: AppRouteHandler<ProcessTextRoute> = async (c) => {
       .filter((result) => result.similarity > 0.8); // threshold, adjust as needed
   }
 
-  // plagiarismResults akan berisi dokumen-dokumen yang similarity > 0.8
-  // Pastikan vector_embeddings sudah didefinisikan sebelum pemanggilan ini
-  // const plagiarismResults = checkPlagiarism(previousRecords || [], vector_embeddings);
-
   try {
     const { page, sentences, isiTugas, page_one } = await extractPdfData(documentUrl);
-
-    console.log('DEBUG page_one:', page_one);
-    logger(page_one)
-
     const schema = z.object({
       name: z.any().describe('student name'),
       id: z.any().describe('10-digit student identification number'),
@@ -97,7 +86,7 @@ export const processText: AppRouteHandler<ProcessTextRoute> = async (c) => {
       // other params...
     });
     const structuredllm = llm.withStructuredOutput(schema);
-    const result = await structuredllm.invoke(`Extract the entities from this text: ${page_one}`);
+    const result = await structuredllm.invoke(`Extract the student's name and identification number from this text: ${page_one}`);
     const parsed = schema.parse(result); // validasi + typing
     const namestudent = String(parsed.name);
     const nrp = String(parsed.id);

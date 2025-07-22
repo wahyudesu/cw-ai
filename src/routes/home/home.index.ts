@@ -10,7 +10,7 @@ import { passwordHeaderMiddleware } from '@/middlewares/password-header';
 
 const router = createRouter();
 
-router.use('/*', passwordHeaderMiddleware);
+// router.use('/*', passwordHeaderMiddleware);
 
 // Helper function to escape HTML
 function escapeHtml(str: string) {
