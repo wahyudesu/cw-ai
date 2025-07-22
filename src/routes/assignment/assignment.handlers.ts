@@ -8,22 +8,9 @@ import { cosineSimilarity } from 'ai';
 import { createGroq } from '@ai-sdk/groq';
 import { generateObject } from 'ai';
 import { z } from 'zod';
-// const pineconeApiKey = (c.env as { PINECONE_API_KEY?: string }).PINECONE_API_KEY;
 import { ChatGroq } from "@langchain/groq";
 import { logger } from '@/middlewares/pino-logger';
 import { env } from 'hono/adapter'
-
-// HAPUS inisialisasi llm di global scope
-// const llm = new ChatGroq({ ... });
-
-const embeddings = new PineconeEmbeddings({
-  // apiKey: pineconeApiKey,
-  model: 'multilingual-e5-large',
-});
-
-const groq = createGroq({
-// custom settings
-});
 
 // Extract PDF data using unpdf
 async function extractPdfData(url: string) {
@@ -54,6 +41,10 @@ export const processText: AppRouteHandler<ProcessTextRoute> = async (c) => {
   const supabaseUrl = (c.env as { SUPABASE_URL: string }).SUPABASE_URL;
   const supabaseKey = (c.env as { SUPABASE_ANON_KEY: string }).SUPABASE_ANON_KEY;
   const supabase = createClient(supabaseUrl, supabaseKey);
+  const embeddings = new PineconeEmbeddings({
+    apiKey: (c.env as { PINECONE_API_KEY: string }).PINECONE_API_KEY,
+    model: 'multilingual-e5-large',
+  });
 
   const { data } = await supabase.from('documents').select('*').eq('id', id).single();
 
