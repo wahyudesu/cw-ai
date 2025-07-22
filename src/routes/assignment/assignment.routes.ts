@@ -6,7 +6,7 @@ import { z } from '@hono/zod-openapi';
 // Input schema: expects a JSON object with 'id' (uuid) and 'documentUrl' (string), plus any additional properties
 export const InputSchema = z
   .object({
-    id: z.string().uuid().openapi({ example: 'b3b7c7e2-8c2a-4e2a-9c2a-7e2a8c2a4e2a' }),
+    id: z.uuid().openapi({ example: 'b3b7c7e2-8c2a-4e2a-9c2a-7e2a8c2a4e2a' }),
     documentUrl: z.string().openapi({ example: 'https://example.com/file.pdf' }),
   })
   .catchall(z.any());
@@ -16,7 +16,7 @@ export const OutputSchema = z.object({
   message: z.string().openapi({ example: 'Data saved successfully.' }),
   data: z
     .object({
-      id: z.string().uuid().openapi({ example: 'b3b7c7e2-8c2a-4e2a-9c2a-7e2a8c2a4e2a' }),
+      id: z.uuid().openapi({ example: 'b3b7c7e2-8c2a-4e2a-9c2a-7e2a8c2a4e2a' }),
       documentUrl: z.string().openapi({ example: 'https://example.com/file.pdf' }),
     })
     .catchall(z.any()),
