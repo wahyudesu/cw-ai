@@ -1,26 +1,31 @@
 import { createRoute, z } from '@hono/zod-openapi';
 
 // Simplified schemas
-const FeedbackInputSchema = z.object({
-  nameAssignment: z.string(),
-  description: z.string(),
-  isiTugas: z.string(),
-  personalization: z.string().optional(),
-}).describe('Input tugas untuk dianalisis');
+const FeedbackInputSchema = z
+  .object({
+    nameAssignment: z.string(),
+    description: z.string(),
+    isiTugas: z.string(),
+    personalization: z.string().optional(),
+  })
+  .describe('Input tugas untuk dianalisis');
 
 // Output schema lebih fleksibel
-const FeedbackOutputSchema = z.object({
-  success: z.boolean(),
-  data: z.any().optional(),
-  error: z.string().optional(),
-}).describe('Response dari analisis tugas');
+const FeedbackOutputSchema = z
+  .object({
+    success: z.boolean(),
+    data: z.any().optional(),
+    error: z.string().optional(),
+  })
+  .describe('Response dari analisis tugas');
 
 // Route definition
 export const processText = createRoute({
   method: 'post',
   path: '/feedback',
   tags: ['AI Feedback'],
-  description: 'Analisis tugas menggunakan AI agent orchestrator untuk memberikan feedback komprehensif',
+  description:
+    'Analisis tugas menggunakan AI agent orchestrator untuk memberikan feedback komprehensif',
   request: {
     body: {
       required: true,

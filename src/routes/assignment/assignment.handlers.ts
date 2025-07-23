@@ -6,7 +6,7 @@ import { extractText, getDocumentProxy } from 'unpdf';
 import { PineconeEmbeddings } from '@langchain/pinecone';
 import { cosineSimilarity } from 'ai';
 import { z } from 'zod';
-import { ChatGroq } from "@langchain/groq";
+import { ChatGroq } from '@langchain/groq';
 import { logger } from '@/middlewares/pino-logger';
 
 // Extract PDF data using unpdf
@@ -59,7 +59,10 @@ export const processText: AppRouteHandler<ProcessTextRoute> = async (c) => {
   if (prevError) throw prevError;
 
   // Function to check plagiarism by comparing cosine similarity of embeddings
-  function checkPlagiarism(records: any[], currentEmbedding: number[]): { id: any; similarity: number }[] {
+  function checkPlagiarism(
+    records: any[],
+    currentEmbedding: number[]
+  ): { id: any; similarity: number }[] {
     return records
       .filter((record) => Array.isArray(record.embedding))
       .map((record) => {
@@ -78,7 +81,7 @@ export const processText: AppRouteHandler<ProcessTextRoute> = async (c) => {
 
     const apiKey = (c.env as { GROQ_API_KEY?: string }).GROQ_API_KEY;
     const llm = new ChatGroq({
-      model: "llama-3.3-70b-versatile",
+      model: 'llama-3.3-70b-versatile',
       temperature: 0,
       maxTokens: undefined,
       maxRetries: 2,
@@ -86,7 +89,9 @@ export const processText: AppRouteHandler<ProcessTextRoute> = async (c) => {
       // other params...
     });
     const structuredllm = llm.withStructuredOutput(schema);
-    const result = await structuredllm.invoke(`Extract the student's name and identification number from this text: ${page_one}`);
+    const result = await structuredllm.invoke(
+      `Extract the student's name and identification number from this text: ${page_one}`
+    );
     const parsed = schema.parse(result); // validasi + typing
     const namestudent = String(parsed.name);
     const nrp = String(parsed.id);

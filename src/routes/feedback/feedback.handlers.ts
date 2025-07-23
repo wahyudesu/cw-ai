@@ -1,16 +1,20 @@
 import type { AppRouteHandler } from '@/lib/types';
 import type { ProcessTextRoute } from './feedback.routes';
 import { ai_agent_orchestrator } from './agents';
+import removeMd from 'remove-markdown';
 
 export const processFeedback: AppRouteHandler<ProcessTextRoute> = async (c) => {
   try {
     const { nameAssignment, description, isiTugas, personalization } = await c.req.json();
 
     if (!nameAssignment || !description || !isiTugas) {
-      return c.json({
-        success: false,
-        error: 'nameAssignment, description, dan isiTugas harus diisi',
-      }, 400);
+      return c.json(
+        {
+          success: false,
+          error: 'nameAssignment, description, dan isiTugas harus diisi',
+        },
+        400
+      );
     }
 
     // Panggil AI agent orchestrator
@@ -22,6 +26,8 @@ export const processFeedback: AppRouteHandler<ProcessTextRoute> = async (c) => {
       personalization || ''
     );
 
+    const cleanFinalEvaluation = removeMd(result.final_evaluation || '');
+
     // Return hasil dari semua agent secara eksplisit
     return c.json({
       success: true,
@@ -29,16 +35,18 @@ export const processFeedback: AppRouteHandler<ProcessTextRoute> = async (c) => {
       data: {
         analysis_result: result.analysis_result,
         summary_result: result.summary_result,
-        final_evaluation: result.final_evaluation,
+        final_evaluation: cleanFinalEvaluation,
         metadata: result.metadata,
       },
     });
-
   } catch (error) {
-    return c.json({
-      success: false,
-      error: error instanceof Error ? error.message : 'Terjadi kesalahan saat memproses tugas',
-      data: null,
-    }, 500);
+    return c.json(
+      {
+        success: false,
+        error: error instanceof Error ? error.message : 'Terjadi kesalahan saat memproses tugas',
+        data: null,
+      },
+      500
+    );
   }
 };
