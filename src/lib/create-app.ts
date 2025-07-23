@@ -15,7 +15,13 @@ export function createRouter() {
 }
 export default function createApp() {
   const app = createRouter();
-  app.use('*', cors());
+  app.use(
+  '*',
+  cors({
+    origin: ['https://your-production-frontend.com'], // ganti dengan domain frontend kamu
+    credentials: true,
+  })
+);
   app.use(logger());
   app.use(serveEmojiFavicon('🆗'));
 
