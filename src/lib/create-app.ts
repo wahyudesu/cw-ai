@@ -20,7 +20,7 @@ export default function createApp() {
     cors({
       origin: '*',
       allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-      allowHeaders: ['Content-Type', 'Authorization'],
+      allowHeaders: ['Content-Type', 'key'], // tambahkan "key" di sini
     })
   );
   app.use(logger());
