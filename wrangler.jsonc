@@ -1,6 +1,6 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "cw-ai",
+  "name": "ngumpulin-backend",
   "main": "src/index.ts",
   "compatibility_date": "2025-07-21",
   "compatibility_flags": ["nodejs_compat"],
