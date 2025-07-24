@@ -1,5 +1,7 @@
 import { createGroq } from '@ai-sdk/groq';
 import { generateText } from 'ai';
+import { createOpenRouter } from '@openrouter/ai-sdk-provider';
+import { createGoogleGenerativeAI } from '@ai-sdk/google';
 
 export async function ai_agent_orchestrator(
   c: any,
@@ -8,11 +10,23 @@ export async function ai_agent_orchestrator(
   isiTugas: string,
   personalization: string
 ) {
+
+  const openrouter = createOpenRouter({
+    apiKey: 'oke',
+  });
+
   const groq = createGroq({
     apiKey: c.env.GROQ_API_KEY,
   });
 
-  const model = groq('gemma2-9b-it');
+  const google = createGoogleGenerativeAI({
+    apiKey: c.env.GEMINI_API_KEY,
+  });
+
+  const model = google('gemini-2.0-flash');
+  // const model =  openrouter.chat('google/gemma-3-27b-it:free');
+
+  // const model = groq('gemma2-9b-it');
 
   const tugasContent = `Nama Tugas: ${nameAssignment}\nDeskripsi: ${description}\nIsi Tugas: ${isiTugas}`;
 

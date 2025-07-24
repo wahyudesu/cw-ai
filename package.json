@@ -8,6 +8,7 @@
     "cf-typegen": "wrangler types --env-interface CloudflareBindings"
   },
   "dependencies": {
+    "@ai-sdk/google": "^1.2.22",
     "@ai-sdk/groq": "^1.2.9",
     "@hono/zod-openapi": "^1.0.2",
     "@langchain/community": "^0.3.49",
@@ -16,6 +17,7 @@
     "@langchain/langgraph": "^0.3.11",
     "@langchain/openai": "^0.6.2",
     "@langchain/pinecone": "^0.2.0",
+    "@openrouter/ai-sdk-provider": "^0.7.3",
     "@pinecone-database/pinecone": "^5.1.2",
     "@scalar/hono-api-reference": "^0.9.11",
     "@supabase/supabase-js": "^2.52.0",
@@ -34,6 +36,6 @@
   "devDependencies": {
     "@types/node": "^24.1.0",
     "prettier": "^3.6.2",
-    "wrangler": "^4.4.0"
+    "wrangler": "^4.25.1"
   }
 }
