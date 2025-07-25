@@ -5,7 +5,7 @@ import pretty from 'pino-pretty';
 export function logger() {
   return pinoLogger({
     pino: pino({
-      level: 'debug',
+      level: 'info',
     }),
     http: {
       reqId: () => crypto.randomUUID(),
